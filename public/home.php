@@ -106,13 +106,30 @@
         </tbody>
     </table>
 </div>
+<?php
+$offset=-18000; //UTC -5 horas Bogota, Lima, Quito (3.600s * -5 horas)
+$numeroDia="N"; //Formato día para el gmdate (muestra el numero del dia)
+$fechaDia="Y-m-d"; //formato fecha
+$horaActual="H:i:s"; //formato hora
+$fdia=gmdate($fechaDia, time()+$offset);//fecha del dia actual
+$hactual=gmdate($horaActual, time()+$offset);
+$dia = $fdia . " " . $hactual;
+//$dia = "2019-06-15 12:00:00";
+
+$partido = mysqli_query($con, "SELECT * FROM `partidos` WHERE `fecha`>'" . $dia . "'");
+$partidocurso = mysqli_fetch_all($partido);
+$ahoral = mysqli_query($con, "SELECT * FROM `equipos` WHERE `idEquipo`=" . $partidocurso[0][1]);
+$ahorav = mysqli_query($con, "SELECT * FROM `equipos` WHERE `idEquipo`=" . $partidocurso[0][2]);
+$ahoralocal = mysqli_fetch_all($ahoral);
+$ahoravisitante = mysqli_fetch_all($ahorav);
+?>
 <div class="partido-curso">
     <label class="textos">Partido en Curso</label><br><br>
     <div style="margin-left: -46%;">
         <div class="resumen">
             <div class="equipos">
                 <div class="equipo">
-                    <label>Japon</label>
+                    <label><?php echo $ahoralocal[0][1]; ?></label>
                 </div>
             </div>
             <div class="marcador">
@@ -122,7 +139,7 @@
         <div class="resumen" style="margin-left: 11px">
             <div class="equipos">
                 <div class="equipo">
-                    <label>Colombia</label>
+                    <label><?php echo $ahoravisitante[0][1]; ?></label>
                 </div>
             </div>
             <div class="marcador">

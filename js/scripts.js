@@ -163,10 +163,30 @@ var check1 = function() {
         document.getElementById('message1').innerHTML = 'Sin Espacios';
     }
 }
+var i=0;
+$(document).ready(function(){
+    $('#site12').click(function(){
+        if(i == 0) {
+            $('#curso').css('display', 'block');
+            $('#copa').css('display', 'none');
+            i++;
+        }else {
+            $('#curso').css('display', 'block');
+            $('#copa').css('display', 'none');
+        }
+    });
+});
+$(document).ready(function(){
+    $('#redirect22').click(function(){
+        if(i == 1) {
+            $('#curso').css('display', 'none');
+            $('#copa').css('display', 'block');
+            i--;
+        }else {
+            $('#curso').css('display', 'none');
+            $('#copa').css('display', 'block');
+        }
+    });
+});
 
-var select = function () {
-    if (document.getElementById('slideThree').valueOf('true')){
-        $("#slideThree").setAttribute("checked", false)
-    }
-}
 
