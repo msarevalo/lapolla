@@ -71,7 +71,7 @@
     $fdia=gmdate($fechaDia, time()+$offset);//fecha del dia actual
     $hactual=gmdate($horaActual, time()+$offset);
     $dia = $fdia . " " . $hactual;
-    //$dia = "2019-06-15 13:59:59";
+    //$dia = "2019-06-15 14:00:00";
 
     $partido = mysqli_query($con, "SELECT * FROM `partidos` WHERE `fecha`>'" . $dia . "'");
     $partidocurso = mysqli_fetch_all($partido);
