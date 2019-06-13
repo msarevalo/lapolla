@@ -48,13 +48,17 @@
 
 </header>
 <div class="acumulados-general">
+    <?php
+    $cantusuarios = mysqli_query($con, "SELECT COUNT(`idUsuario`) FROM `usuarios`");
+    $cantidad = mysqli_fetch_all($cantusuarios);
+    ?>
     <div class="acumulados">
         <div class="pozo">
             <div style="margin-top: 14.46px">
                 <label>Total Usuarios</label>
             </div>
         </div>
-        <label class="valor1">4</label>
+        <label class="valor1"><?php echo $cantidad[0][0]?></label>
     </div>
     <div class="acumulados" style="margin-left: 10px">
         <div class="pozo">
@@ -79,30 +83,37 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>Manuel Arévalo</td>
-            <td>6</td>
-            <td>18</td>
-            <td>Ok</td>
-        </tr>
-        <tr>
-            <td>Fernando Torres</td>
-            <td>6</td>
-            <td>17</td>
-            <td>Ok</td>
-        </tr>
-        <tr>
-            <td>Edna Gomez</td>
-            <td>6</td>
-            <td>15</td>
-            <td>No</td>
-        </tr>
-        <tr>
-            <td>Paola Vasquez</td>
-            <td>6</td>
-            <td>10</td>
-            <td>Ok</td>
-        </tr>
+        <?php
+            $usuarios = mysqli_query($con, "SELECT * FROM `usuarios` ORDER BY `puntos` DESC");
+            while ($usuario = mysqli_fetch_array($usuarios)){
+                $participacion = mysqli_query($con, "SELECT COUNT(`usuario`) FROM `apuestas` WHERE `usuario`=" . $usuario[0]);
+                $total = mysqli_fetch_all($participacion);
+
+                if ($usuario[9] == 0){
+                    $pago = "NO";
+                }else{
+                    $pago = "OK";
+                }
+
+                if (isset($_SESSION['id']) && $usuario[0] == $_SESSION['id']){
+                    echo "<tr>
+            <td style='color: #FFC400'>". $usuario[1] . " " . $usuario[2] . "</td>
+            <td style='color: #FFC400'>" . $total[0][0] . "</td>
+            <td style='color: #FFC400'>" . $usuario[8] . "</td>
+            <td style='color: #FFC400'>" . $pago . "</td>
+        </tr>";
+                }else{
+                    echo "<tr>
+            <td>". $usuario[1] . " " . $usuario[2] . "</td>
+            <td>" . $total[0][0] . "</td>
+            <td>" . $usuario[8] . "</td>
+            <td>" . $pago . "</td>
+        </tr>";
+                }
+
+            }
+        ?>
+
         </tbody>
     </table>
 </div>
@@ -153,7 +164,13 @@ $ahoravisitante = mysqli_fetch_all($ahorav);
                 </div>
             </div>
             <div class="marcador">
-                <label>SI</label>
+                <?php
+                if ($dia <= $partidocurso[0][5]){
+                    echo "<label style='margin-left: -40%'>En Curso</label>";
+                }else{
+                  echo "<label>SI</label>";
+                }
+                ?>
             </div>
         </div>
     </div>

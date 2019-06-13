@@ -79,10 +79,23 @@
     $ahorav = mysqli_query($con, "SELECT * FROM `equipos` WHERE `idEquipo`=" . $partidocurso[0][2]);
     $ahoralocal = mysqli_fetch_all($ahoral);
     $ahoravisitante = mysqli_fetch_all($ahorav);
+
+    $participa = mysqli_query($con, "SELECT * FROM `apuestas` WHERE `apuestas`.`usuario`=" . $_SESSION['id'] . " AND `apuestas`.`partido`=" . $partidocurso[0][0]);
+    $participax = mysqli_fetch_all($participa);
+
+    if (isset($participax[0][0])){
+        $local = $participax[0][2];
+        $visitante = $participax[0][3];
+        $texto = "Editar Marcador";
+        $ruta = "../back/editarp.php";
+    }else{
+        $texto = "Enviar Marcador";
+        $ruta = "../back/enviarp.php";
+    }
     ?>
     <div>
         <div id="curso" style="display: block">
-            <form>
+            <form method="post" action="<?php echo $ruta;?>">
                 <div class="partido-curso">
                     <label class="textos" style="margin: -10%">Partido en Curso</label><br><br>
                     <div style="margin-left: -70%;">
@@ -93,7 +106,13 @@
                                 </div>
                             </div>
                             <div class="marcador">
-                                <input type="number" placeholder="-" required class="imarcador" min="0" step="1" >
+                                <?php
+                                if (isset($participax[0][0])){
+                                    echo "<input id='local' name='local' type=\"number\" placeholder=\"-\" required class=\"imarcador\" min=\"0\" step=\"1\" value='" . $local . "'>";
+                                }else{
+                                    echo "<input id='local' name='local' type=\"number\" placeholder=\"-\" required class=\"imarcador\" min=\"0\" step=\"1\" >";
+                                }
+                                ?>
                             </div>
                         </div>
                         <div class="resumen" style="margin-left: 11px">
@@ -103,7 +122,13 @@
                                 </div>
                             </div>
                             <div class="marcador">
-                                <input type="number" placeholder="-" required class="imarcador" min="0">
+                                <?php
+                                if (isset($participax[0][0])){
+                                    echo "<input id='visitante' name='visitante' type=\"number\" placeholder=\"-\" required class=\"imarcador\" min=\"0\" step=\"1\" value='" . $visitante . "'>";
+                                }else{
+                                    echo "<input id='visitante' name='visitante' type=\"number\" placeholder=\"-\" required class=\"imarcador\" min=\"0\" step=\"1\" >";
+                                }
+                                ?>
                             </div>
                         </div>
                         <div class="resumen" style="margin-left: 11px">
@@ -113,7 +138,10 @@
                                 </div>
                             </div>
                             <div class="marcador">
-                                <input type="submit" value="Enviar Marcador">
+                                <?php
+                                    $_SESSION['idpartido'] = $partidocurso[0][0];
+                                    echo "<input type=\"submit\" value='" . $texto . "'>";
+                                ?>
                             </div>
                         </div>
                     </div>
@@ -121,12 +149,13 @@
             </form>
         </div>
         <div id="copa" style="display: none">
-            <form>
+            <form method="post" action="../back/marcadores.php">
                 <div class="partido-curso">
                     <label class="textos" style="margin-left: -18%">Partidos Copa America</label><br><br>
 
         <?php
         $partidos = mysqli_query($con, "SELECT * FROM `partidos` WHERE `fecha`>'" . $dia . "' ORDER BY `idPartido` ASC");
+        $contador=0;
         while ($partidoscurso = mysqli_fetch_array($partidos)){
             //echo "<br>" . $partidoscurso[1] . $partidoscurso[2];
             $ahorasl = mysqli_query($con, "SELECT * FROM `equipos` WHERE `idEquipo`=" . $partidoscurso[1]);
@@ -134,15 +163,29 @@
             $ahoraslocal = mysqli_fetch_all($ahorasl);
             $ahorasvisitante = mysqli_fetch_all($ahorasv);
             //echo "<br>" . $ahoraslocal[0][1] . $ahorasvisitante[0][1];
+
+            $participacopa = mysqli_query($con, "SELECT * FROM `apuestas` WHERE `apuestas`.`usuario`=" . $_SESSION['id'] . " AND `apuestas`.`partido`=" . $partidocurso[$contador][0]);
+            $participac = mysqli_fetch_all($participacopa);
+
+            if (isset($participac[0][0])){
+                $local = $participac[0][2];
+                $visitante = $participac[0][3];
+            }
+
             echo "<div style=\"margin-left: -70%;\"><div class=\"resumen\">
                                 <div class=\"equipos\">
                                     <div class=\"equipo\">
                                         <label>" .  $ahoraslocal[0][1] . "</label>
                                     </div>
                                 </div>
-                                <div class=\"marcador\">
-                                    <input type=\"number\" placeholder=\"-\"  class=\"imarcador\" min=\"0\" step=\"1\" >
-                                </div>
+                                <div class=\"marcador\">";
+                    if (isset($participac[0][0])){
+                        echo "<input value='" . $local . "' name='local". $partidoscurso[0] . "' type=\"number\" placeholder=\"-\"  class=\"imarcador\" min=\"0\" step=\"1\" >";
+                    }else{
+                        echo "<input name='local". $partidoscurso[0] . "' type=\"number\" placeholder=\"-\"  class=\"imarcador\" min=\"0\" step=\"1\" >";
+                    }
+
+                                echo "</div>
                             </div>
                             <div class=\"resumen\" style=\"margin-left: 11px\">
                                 <div class=\"equipos\">
@@ -150,9 +193,13 @@
                                         <label>" . $ahorasvisitante[0][1] . "</label>
                                     </div>
                                 </div>
-                            <div class=\"marcador\">
-                                <input type=\"number\" placeholder=\"-\" class=\"imarcador\" min=\"0\">
-                            </div>
+                            <div class=\"marcador\">";
+            if (isset($participac[0][0])){
+                echo "<input value='" . $visitante . "' name='visitante" . $partidoscurso[0] . "' type=\"number\" placeholder=\"-\" class=\"imarcador\" min=\"0\">";
+            }else{
+                echo "<input name='visitante" . $partidoscurso[0] . "' type=\"number\" placeholder=\"-\" class=\"imarcador\" min=\"0\">";
+            }
+                            echo "</div>
                         </div>
                         <div class=\"resumen\" style=\"margin-left: 11px\">
                             <div class=\"equipos\">
@@ -165,9 +212,11 @@
                             </div>
                         </div>
                     </div>";
+        $contador++;
         }
 
         ?>
+                    <input type="submit" value="Enviar" id="entrar">
                 </div>
             </form>
         </div>

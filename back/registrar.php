@@ -43,6 +43,10 @@ if ($pass == $rpass){
             echo "fallo";
         }*/
         if ($consulta) {
+            $resultado = mysqli_query($con, "SELECT * FROM `usuarios` WHERE `usuarios`.`usuario` = '" . $user . "'");
+            $respuesta = mysqli_fetch_all($resultado);
+            $_SESSION['username'] = $respuesta[0][5];
+            $_SESSION['id'] = $respuesta[0][0];
             echo "<script>alert('Se realizó el registro con exito'); window.location.href='../public/home.php'</script>";
         } else {
             echo "<script>alert('Algo ha fallado'); window.location.href='../public/registro.php'</script>";
