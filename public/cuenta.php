@@ -71,9 +71,9 @@
     $fdia=gmdate($fechaDia, time()+$offset);//fecha del dia actual
     $hactual=gmdate($horaActual, time()+$offset);
     $dia = $fdia . " " . $hactual;
-    //$dia = "2019-06-15 14:00:00";
+    //$dia = "2019-06-14 21:00:00";
 
-    $partido = mysqli_query($con, "SELECT * FROM `partidos` WHERE `fecha`>'" . $dia . "'");
+    $partido = mysqli_query($con, "SELECT * FROM `partidos` WHERE `fechafin`>'" . $dia . "'");
     $partidocurso = mysqli_fetch_all($partido);
     $ahoral = mysqli_query($con, "SELECT * FROM `equipos` WHERE `idEquipo`=" . $partidocurso[0][1]);
     $ahorav = mysqli_query($con, "SELECT * FROM `equipos` WHERE `idEquipo`=" . $partidocurso[0][2]);
@@ -83,6 +83,8 @@
     $participa = mysqli_query($con, "SELECT * FROM `apuestas` WHERE `apuestas`.`usuario`=" . $_SESSION['id'] . " AND `apuestas`.`partido`=" . $partidocurso[0][0]);
     $participax = mysqli_fetch_all($participa);
 
+    $local = null;
+    $visitante = null;
     if (isset($participax[0][0])){
         $local = $participax[0][2];
         $visitante = $participax[0][3];
@@ -98,6 +100,11 @@
             <form method="post" action="<?php echo $ruta;?>">
                 <div class="partido-curso">
                     <label class="textos" style="margin: -10%">Partido en Curso</label><br><br>
+                    <?php
+                    if ($dia>$partidocurso[0][3]){
+                        echo "<label class=\"textos\" style=\"margin: -10%; margin-left: -40%\">Tu marcador ingresado para este partido es</label><br><br>";
+                    }
+                    ?>
                     <div style="margin-left: -70%;">
                         <div class="resumen">
                             <div class="equipos">
@@ -107,10 +114,14 @@
                             </div>
                             <div class="marcador">
                                 <?php
-                                if (isset($participax[0][0])){
-                                    echo "<input id='local' name='local' type=\"number\" placeholder=\"-\" required class=\"imarcador\" min=\"0\" step=\"1\" value='" . $local . "'>";
+                                if ($dia>$partidocurso[0][3]) {
+                                    echo "<input id='local' name='local' type=\"number\" placeholder=\"-\" required class=\"imarcador\" min=\"0\" step=\"1\" value='" . $local . "' disabled>";
                                 }else{
-                                    echo "<input id='local' name='local' type=\"number\" placeholder=\"-\" required class=\"imarcador\" min=\"0\" step=\"1\" >";
+                                    if (isset($participax[0][0])) {
+                                        echo "<input id='local' name='local' type=\"number\" placeholder=\"-\" required class=\"imarcador\" min=\"0\" step=\"1\" value='" . $local . "'>";
+                                    } else {
+                                        echo "<input id='local' name='local' type=\"number\" placeholder=\"-\" required class=\"imarcador\" min=\"0\" step=\"1\" >";
+                                    }
                                 }
                                 ?>
                             </div>
@@ -123,10 +134,14 @@
                             </div>
                             <div class="marcador">
                                 <?php
-                                if (isset($participax[0][0])){
-                                    echo "<input id='visitante' name='visitante' type=\"number\" placeholder=\"-\" required class=\"imarcador\" min=\"0\" step=\"1\" value='" . $visitante . "'>";
-                                }else{
-                                    echo "<input id='visitante' name='visitante' type=\"number\" placeholder=\"-\" required class=\"imarcador\" min=\"0\" step=\"1\" >";
+                                if ($dia>$partidocurso[0][3]) {
+                                    echo "<input id='visitante' name='visitante' type=\"number\" placeholder=\"-\" required class=\"imarcador\" min=\"0\" step=\"1\" value='" . $visitante . "' disabled>";
+                                }else {
+                                    if (isset($participax[0][0])) {
+                                        echo "<input id='visitante' name='visitante' type=\"number\" placeholder=\"-\" required class=\"imarcador\" min=\"0\" step=\"1\" value='" . $visitante . "'>";
+                                    } else {
+                                        echo "<input id='visitante' name='visitante' type=\"number\" placeholder=\"-\" required class=\"imarcador\" min=\"0\" step=\"1\" >";
+                                    }
                                 }
                                 ?>
                             </div>
@@ -140,7 +155,12 @@
                             <div class="marcador">
                                 <?php
                                     $_SESSION['idpartido'] = $partidocurso[0][0];
+                                if ($dia>$partidocurso[0][3]) {
+                                    echo "<input type=\"submit\" value='" . $texto . "' disabled>";
+                                }else{
                                     echo "<input type=\"submit\" value='" . $texto . "'>";
+                                }
+
                                 ?>
                             </div>
                         </div>

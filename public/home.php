@@ -49,8 +49,11 @@
 </header>
 <div class="acumulados-general">
     <?php
-    $cantusuarios = mysqli_query($con, "SELECT COUNT(`idUsuario`) FROM `usuarios`");
+    $cantusuarios = mysqli_query($con, "SELECT COUNT(`idUsuario`) FROM `usuarios` WHERE `perfil`<>'admin'");
     $cantidad = mysqli_fetch_all($cantusuarios);
+
+    $pagos = mysqli_query($con, "SELECT COUNT(`idUsuario`) FROM `usuarios` WHERE `pago`=1 AND `perfil`<>'admin'");
+    $cantidadpagos = mysqli_fetch_all($pagos);
     ?>
     <div class="acumulados">
         <div class="pozo">
@@ -67,7 +70,7 @@
             </div>
         </div>
         <div class="valor">
-            <label>$30.000</label>
+            <label><?php echo "$ " . number_format($cantidadpagos[0][0]*30000)?></label>
         </div>
     </div>
 </div>
@@ -84,7 +87,7 @@
         </thead>
         <tbody>
         <?php
-            $usuarios = mysqli_query($con, "SELECT * FROM `usuarios` ORDER BY `puntos` DESC");
+            $usuarios = mysqli_query($con, "SELECT * FROM `usuarios` WHERE `perfil`<>'admin' ORDER BY `puntos` DESC");
             while ($usuario = mysqli_fetch_array($usuarios)){
                 $participacion = mysqli_query($con, "SELECT COUNT(`usuario`) FROM `apuestas` WHERE `usuario`=" . $usuario[0]);
                 $total = mysqli_fetch_all($participacion);
@@ -99,7 +102,7 @@
                     echo "<tr>
             <td style='color: #FFC400'>". $usuario[1] . " " . $usuario[2] . "</td>
             <td style='color: #FFC400'>" . $total[0][0] . "</td>
-            <td style='color: #FFC400'>" . $usuario[8] . "</td>
+            <td style='color: #FFC400; font-weight: bold'>" . $usuario[8] . "</td>
             <td style='color: #FFC400'>" . $pago . "</td>
         </tr>";
                 }else{
@@ -125,9 +128,9 @@ $horaActual="H:i:s"; //formato hora
 $fdia=gmdate($fechaDia, time()+$offset);//fecha del dia actual
 $hactual=gmdate($horaActual, time()+$offset);
 $dia = $fdia . " " . $hactual;
-//$dia = "2019-06-15 12:00:00";
+$dia = "2019-06-14 19:00:00";
 
-$partido = mysqli_query($con, "SELECT * FROM `partidos` WHERE `fecha`>'" . $dia . "'");
+$partido = mysqli_query($con, "SELECT * FROM `partidos` WHERE `fechafin`>'" . $dia . "'");
 $partidocurso = mysqli_fetch_all($partido);
 $ahoral = mysqli_query($con, "SELECT * FROM `equipos` WHERE `idEquipo`=" . $partidocurso[0][1]);
 $ahorav = mysqli_query($con, "SELECT * FROM `equipos` WHERE `idEquipo`=" . $partidocurso[0][2]);
@@ -160,15 +163,15 @@ $ahoravisitante = mysqli_fetch_all($ahorav);
         <div class="resumen" style="margin-left: 11px">
             <div class="equipos">
                 <div class="equipo">
-                    <label>Ganador</label>
+                    <label>Estado</label>
                 </div>
             </div>
             <div class="marcador">
                 <?php
-                if ($dia <= $partidocurso[0][5]){
-                    echo "<label style='margin-left: -40%'>En Curso</label>";
+                if ($dia <= $partidocurso[0][5] && $dia >= $partidocurso[0][3]){
+                    echo "<label style='margin-left: -40%;'>En Curso</label>";
                 }else{
-                  echo "<label>SI</label>";
+                  echo "<label style='margin-left: -40%;'>Por Jugar</label>";
                 }
                 ?>
             </div>

@@ -35,9 +35,9 @@ while ($partidoscurso = mysqli_fetch_array($partidos)){
         //echo $busquedac[0][0];
         if (isset($busquedac[0][0])) {
             //echo $busquedac[0][0];
-            $actualiza = mysqli_query($con, "UPDATE `apuestas` SET `local` = '" . $localpost . "', `visitante`='" . $visitantepost . "' WHERE `apuestas`.`usuario` = " . $_SESSION['id'] . " AND `apuestas`.`partido` = " . $partidoscurso[0] . ";");
+            $actualiza = mysqli_query($con, "UPDATE `apuestas` SET `local` = '" . $localpost . "', `visitante`='" . $visitantepost . "', `localInt` = '" . $localpost . "', `visitanteInt`='" . $visitantepost . "' WHERE `apuestas`.`usuario` = " . $_SESSION['id'] . " AND `apuestas`.`partido` = " . $partidoscurso[0] . ";");
         } else {
-            $inserta = mysqli_query($con, "INSERT INTO `apuestas` (`usuario`, `local`, `visitante`, `partido`) VALUES ('" . $_SESSION['id'] . "', '" . $localpost . "', '" . $visitantepost . "', '" . $partidoscurso[0] . "');");
+            $inserta = mysqli_query($con, "INSERT INTO `apuestas` (`usuario`, `local`, `visitante`, `partido`, `localInt`, `visitanteInt`) VALUES ('" . $_SESSION['id'] . "', '" . $localpost . "', '" . $visitantepost . "', '" . $partidoscurso[0] . "', '" . $localpost . "', '" . $visitantepost . "');");
         }
     }
 }

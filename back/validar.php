@@ -31,9 +31,10 @@ if($resultado){
     //echo ' entro';exit;
     $hash = $respuesta[0][5];
     if (password_verify($pass, $hash) ){
-        if ($respuesta[0][6]==="admin"){
+        if ($respuesta[0][7]=="admin"){
             $_SESSION['username'] = $respuesta[0][5];
             $_SESSION['id'] = $respuesta[0][0];
+            $_SESSION['perfil'] = $respuesta[0][7];
             header("Location: ../public/admin.php");
         }else {
             $_SESSION['username'] = $respuesta[0][5];
